@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI Career Application Copilot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #060912;
+    --surface: rgba(255,255,255,0.04);
+    --surface-hover: rgba(255,255,255,0.07);
+    --border: rgba(255,255,255,0.08);
+    --border-glow: rgba(100,180,255,0.25);
+    --text: #e8edf8;
+    --text-muted: rgba(232,237,248,0.45);
+    --accent-blue: #4fa3ff;
+    --accent-cyan: #00d4ff;
+    --accent-purple: #a78bfa;
+    --accent-green: #34d399;
+    --accent-rose: #f87171;
+    --accent-amber: #fbbf24;
+    --glow-blue: rgba(79,163,255,0.18);
+    --glow-purple: rgba(167,139,250,0.15);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  /* Background atmosphere */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 15% 10%, rgba(79,163,255,0.09) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 60% at 85% 80%, rgba(167,139,250,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 50% 50%, rgba(0,212,255,0.04) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper { position: relative; z-index: 1; }
+
+  /* ── HEADER ── */
+  header {
+    padding: 28px 40px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: rgba(6,9,18,0.7);
+    backdrop-filter: blur(20px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .logo-mark {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #4fa3ff, #a78bfa);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 0 20px rgba(79,163,255,0.4);
+    flex-shrink: 0;
+  }
+
+  .header-text h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(90deg, #e8edf8, #a78bfa, #4fa3ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+  }
+
+  .header-text p {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 300;
+    letter-spacing: 0.01em;
+  }
+
+  .header-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    box-shadow: 0 0 8px var(--accent-green);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .status-label {
+    font-size: 0.75rem;
+    color: var(--accent-green);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ── MAIN GRID ── */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 24px;
+    padding: 28px 40px;
+    min-height: calc(100vh - 100px);
+  }
+
+  /* ── GLASS CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    backdrop-filter: blur(20px);
+    transition: border-color 0.3s ease;
+  }
+
+  .card:hover { border-color: rgba(255,255,255,0.13); }
+
+  .card-header {
+    padding: 22px 24px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .card-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .icon-blue { background: rgba(79,163,255,0.15); }
+  .icon-purple { background: rgba(167,139,250,0.15); }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+
+  .card-subtitle {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+
+  /* ── FORM ── */
+  .form-body { padding: 0 24px 24px; }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .field { margin-bottom: 14px; }
+  .field.full { grid-column: 1 / -1; }
+
+  label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  input, textarea, select {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    -webkit-appearance: none;
+  }
+
+  input::placeholder, textarea::placeholder { color: var(--text-muted); font-weight: 300; }
+
+  input:focus, textarea:focus, select:focus {
+    border-color: rgba(79,163,255,0.5);
+    box-shadow: 0 0 0 3px rgba(79,163,255,0.1);
+    background: rgba(255,255,255,0.07);
+  }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23667' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+
+  select option { background: #0d1117; color: var(--text); }
+
+  textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 18px 0;
+  }
+
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── BUTTONS ── */
+  .btn-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 11px 16px;
+    border-radius: var(--radius-sm);
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.825rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.01em;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #4fa3ff, #6366f1);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(79,163,255,0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(79,163,255,0.45);
+  }
+
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-secondary {
+    background: rgba(167,139,250,0.12);
+    color: var(--accent-purple);
+    border: 1px solid rgba(167,139,250,0.25);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(167,139,250,0.2);
+    border-color: rgba(167,139,250,0.45);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(167,139,250,0.2);
+  }
+
+  /* ── RIGHT PANEL ── */
+  .right-panel { display: flex; flex-direction: column; gap: 20px; }
+
+  /* ── AI PANEL ── */
+  .ai-panel { flex: 1; }
+
+  .ai-content { padding: 0 24px 24px; }
+
+  .ai-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .ai-orb {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(79,163,255,0.2), rgba(167,139,250,0.2));
+    border: 1px solid rgba(79,163,255,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    position: relative;
+    animation: orb-breathe 3s ease-in-out infinite;
+  }
+
+  @keyframes orb-breathe {
+    0%, 100% { box-shadow: 0 0 20px rgba(79,163,255,0.15); }
+    50% { box-shadow: 0 0 40px rgba(79,163,255,0.3), 0 0 60px rgba(167,139,250,0.15); }
+  }
+
+  .ai-placeholder p {
+    font-size: 0.83rem;
+    color: var(--text-muted);
+    max-width: 220px;
+    line-height: 1.6;
+  }
+
+  .ai-response {
+    display: none;
+    animation: fadeSlideUp 0.4s ease;
+  }
+
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .ai-response.visible { display: block; }
+
+  .ai-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(79,163,255,0.12);
+    border: 1px solid rgba(79,163,255,0.2);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--accent-blue);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .ai-message {
+    font-size: 0.9rem;
+    line-height: 1.75;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+
+  .ai-tips {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ai-tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    transition: border-color 0.2s, background 0.2s;
+    animation: fadeSlideUp 0.4s ease both;
+  }
+
+  .ai-tip:hover {
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(255,255,255,0.13);
+  }
+
+  .tip-icon {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .tip-text {
+    font-size: 0.825rem;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* status chips */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .chip-interested { background: rgba(79,163,255,0.12); color: var(--accent-blue); border: 1px solid rgba(79,163,255,0.25); }
+  .chip-applied { background: rgba(0,212,255,0.1); color: var(--accent-cyan); border: 1px solid rgba(0,212,255,0.2); }
+  .chip-assessment { background: rgba(251,191,36,0.12); color: var(--accent-amber); border: 1px solid rgba(251,191,36,0.25); }
+  .chip-interview { background: rgba(167,139,250,0.12); color: var(--accent-purple); border: 1px solid rgba(167,139,250,0.25); }
+  .chip-offer { background: rgba(52,211,153,0.12); color: var(--accent-green); border: 1px solid rgba(52,211,153,0.25); }
+  .chip-rejected { background: rgba(248,113,113,0.1); color: var(--accent-rose); border: 1px solid rgba(248,113,113,0.2); }
+
+  /* ── STATS ROW ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px 18px;
+    transition: border-color 0.2s;
+  }
+
+  .stat-card:hover { border-color: rgba(255,255,255,0.13); }
+
+  .stat-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
+
+  /* ── TRACKER TABLE ── */
+  .tracker-section { padding: 28px 40px 40px; }
+
+  .tracker-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .tracker-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .tracker-title h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .count-badge {
+    background: rgba(79,163,255,0.15);
+    color: var(--accent-blue);
+    border: 1px solid rgba(79,163,255,0.25);
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  thead { background: rgba(255,255,255,0.04); }
+
+  th {
+    padding: 13px 18px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 14px 18px;
+    font-size: 0.845rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  tbody tr {
+    transition: background 0.15s;
+  }
+
+  tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+  .td-company { font-weight: 500; color: var(--text); }
+  .td-role { color: var(--text-muted); font-size: 0.8rem; }
+  .td-date { color: var(--text-muted); font-size: 0.8rem; }
+  .td-notes { color: var(--text-muted); font-size: 0.8rem; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--text-muted);
+  }
+
+  .empty-icon { font-size: 32px; margin-bottom: 10px; opacity: 0.4; }
+  .empty-state p { font-size: 0.83rem; }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: rgba(52,211,153,0.15);
+    border: 1px solid rgba(52,211,153,0.3);
+    color: var(--accent-green);
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 0.83rem;
+    font-weight: 500;
+    backdrop-filter: blur(12px);
+    z-index: 999;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+  }
+
+  #toast.show { opacity: 1; transform: translateY(0); }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: repeat(3, 1fr); }
+    header { padding: 18px 20px; }
+    .main-grid, .tracker-section { padding-left: 20px; padding-right: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-left">
+    <div class="logo-mark">⚡</div>
+    <div class="header-text">
+      <h1>AI Career Application Copilot</h1>
+      <p>Intelligent job tracking & personalized AI guidance for every stage</p>
+    </div>
+  </div>
+  <div class="header-badge">
+    <div class="status-dot"></div>
+    <span class="status-label">AI Online</span>
+  </div>
+</header>
+
+<!-- ── MAIN GRID ── -->
+<div class="main-grid">
+
+  <!-- LEFT: INPUT FORM -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-blue">📋</div>
+      <div>
+        <div class="card-title">Application Details</div>
+        <div class="card-subtitle">Track a new job application</div>
+      </div>
+    </div>
+    <div class="form-body">
+      <div class="form-row">
+        <div class="field">
+          <label>Company Name</label>
+          <input id="company" type="text" placeholder="e.g. Google" />
+        </div>
+        <div class="field">
+          <label>Job Title</label>
+          <input id="jobTitle" type="text" placeholder="e.g. Software Engineer" />
+        </div>
+        <div class="field">
+          <label>Date Applied</label>
+          <input id="dateApplied" type="date" />
+        </div>
+        <div class="field">
+          <label>Status</label>
+          <select id="status">
+            <option value="">Select status…</option>
+            <option value="Interested">Interested</option>
+            <option value="Applied">Applied</option>
+            <option value="Assessment">Assessment</option>
+            <option value="Interview">Interview</option>
+            <option value="Offer">Offer</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label>Notes</label>
+          <input id="notes" type="text" placeholder="Quick note…" />
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-label">AI Context</div>
+
+      <div class="field">
+        <label>Job Description</label>
+        <textarea id="jobDesc" placeholder="Paste job description here for better AI suggestions…" rows="4"></textarea>
+      </div>
+      <div class="field">
+        <label>Resume Highlights</label>
+        <textarea id="resumeText" placeholder="Paste key parts of your resume or skills…" rows="3"></textarea>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="saveApplication()">
+          💾 Save Application
+        </button>
+        <button class="btn btn-secondary" onclick="generateAI()">
+          ✦ Generate AI Tip
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: AI + STATS -->
+  <div class="right-panel">
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value" id="stat-total" style="color: var(--accent-blue)">0</div>
+        <div class="stat-label">Total Applications</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-active" style="color: var(--accent-purple)">0</div>
+        <div class="stat-label">Active Processes</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-offers" style="color: var(--accent-green)">0</div>
+        <div class="stat-label">Offers Received</div>
+      </div>
+    </div>
+
+    <!-- AI PANEL -->
+    <div class="card ai-panel">
+      <div class="card-header">
+        <div class="card-icon icon-purple">✦</div>
+        <div>
+          <div class="card-title">AI Copilot Suggestion</div>
+          <div class="card-subtitle">Personalized guidance based on your status</div>
+        </div>
+      </div>
+      <div class="ai-content">
+
+        <div class="ai-placeholder" id="ai-placeholder">
+          <div class="ai-orb">✦</div>
+          <p>Fill in your application details and click <strong>Generate AI Tip</strong> to get personalized guidance.</p>
+        </div>
+
+        <div class="ai-response" id="ai-response">
+          <div class="ai-tag" id="ai-status-tag">✦ &nbsp;Status: —</div>
+          <div class="ai-message" id="ai-message"></div>
+          <div class="ai-tips" id="ai-tips"></div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TRACKER TABLE ── -->
+<div class="tracker-section">
+  <div class="tracker-header">
+    <div class="tracker-title">
+      <span>📊</span>
+      <h2>Application Tracker</h2>
+      <span class="count-badge" id="count-badge">0 saved</span>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Company</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Date Applied</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <tr id="empty-row">
+          <td colspan="5">
+            <div class="empty-state">
+              <div class="empty-icon">📭</div>
+              <p>No applications saved yet. Add one above to get started.</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div><!-- .wrapper -->
+
+<div id="toast">✓ Application saved</div>
+
+<script>
+const applications = [];
+
+const aiData = {
+  Interested: {
+    message: "You've bookmarked this role — great instinct! Now is the perfect time to research the company deeply and tailor your resume before applying.",
+    tips: [
+      { icon: "🔍", color: "rgba(79,163,255,0.15)", text: "Research the company's mission, recent news, and culture on LinkedIn and Glassdoor." },
+      { icon: "📝", color: "rgba(79,163,255,0.15)", text: "Tailor your resume to highlight keywords from the job description." },
+      { icon: "🤝", color: "rgba(79,163,255,0.15)", text: "Try to find a connection at the company through your network before applying." }
+    ]
+  },
+  Applied: {
+    message: "Application submitted — nice work! Your next move is a strategic follow-up and proactive networking to stand out in a competitive pool.",
+    tips: [
+      { icon: "📧", color: "rgba(0,212,255,0.12)", text: "Send a polite follow-up email to the recruiter 5–7 business days after applying." },
+      { icon: "🔗", color: "rgba(0,212,255,0.12)", text: "Connect with employees on LinkedIn to get insights and increase your visibility." },
+      { icon: "📁", color: "rgba(0,212,255,0.12)", text: "Keep a copy of the exact resume and cover letter you submitted for this role." }
+    ]
+  },
+  Assessment: {
+    message: "You've been invited to an assessment — that means your resume impressed them! Time to prepare thoroughly and show off your problem-solving skills.",
+    tips: [
+      { icon: "🧩", color: "rgba(251,191,36,0.12)", text: "Practice timed assessments on HackerRank or similar platforms to sharpen speed and accuracy." },
+      { icon: "📖", color: "rgba(251,191,36,0.12)", text: "Study concepts commonly tested at this company type (e.g., algorithms, case studies, or aptitude)." },
+      { icon: "⏱️", color: "rgba(251,191,36,0.12)", text: "Complete any test well before the deadline — rushing leads to careless errors." }
+    ]
+  },
+  Interview: {
+    message: "You've landed an interview — this is a huge milestone! Focused prep and authentic storytelling will set you apart from other candidates.",
+    tips: [
+      { icon: "🎤", color: "rgba(167,139,250,0.15)", text: "Prepare 5–7 STAR-format stories (Situation, Task, Action, Result) from your past experience." },
+      { icon: "🏢", color: "rgba(167,139,250,0.15)", text: "Research the interviewer's background on LinkedIn and prepare smart, thoughtful questions." },
+      { icon: "💻", color: "rgba(167,139,250,0.15)", text: "For technical roles, practice live coding with a timer to simulate real interview conditions." }
+    ]
+  },
+  Offer: {
+    message: "Congratulations — you have an offer! 🎉 Don't rush to accept. Take time to carefully evaluate the full package and negotiate confidently.",
+    tips: [
+      { icon: "💰", color: "rgba(52,211,153,0.12)", text: "Compare the base salary, equity, benefits, and PTO against market data on Levels.fyi or LinkedIn Salary." },
+      { icon: "📅", color: "rgba(52,211,153,0.12)", text: "Ask for an extension on the decision deadline if you're waiting on other offers — this is standard practice." },
+      { icon: "🤝", color: "rgba(52,211,153,0.12)", text: "Negotiate! Studies show 70%+ of employers expect it. Aim for a counter 10–15% above the initial offer." }
+    ]
+  },
+  Rejected: {
+    message: "A rejection is a redirect, not a dead end. Every top professional has a collection of rejections — what matters is how you respond and keep moving.",
+    tips: [
+      { icon: "💬", color: "rgba(248,113,113,0.1)", text: "Send a gracious reply thanking the team — it leaves a positive impression for future openings." },
+      { icon: "📋", color: "rgba(248,113,113,0.1)", text: "Request feedback if possible, and use it to refine your resume and interview responses." },
+      { icon: "🚀", color: "rgba(248,113,113,0.1)", text: "Identify 3–5 similar companies or roles and apply this week to maintain momentum." }
+    ]
+  }
+};
+
+const statusChipClass = {
+  Interested: 'chip-interested',
+  Applied: 'chip-applied',
+  Assessment: 'chip-assessment',
+  Interview: 'chip-interview',
+  Offer: 'chip-offer',
+  Rejected: 'chip-rejected'
+};
+
+function generateAI() {
+  const status = document.getElementById('status').value;
+  if (!status) {
+    showToast('⚠️ Please select a status first', true);
+    return;
+  }
+
+  const data = aiData[status];
+  document.getElementById('ai-placeholder').style.display = 'none';
+
+  const response = document.getElementById('ai-response');
+  response.classList.remove('visible');
+  void response.offsetWidth; // reflow for re-animation
+  response.classList.add('visible');
+
+  document.getElementById('ai-status-tag').innerHTML = `✦ &nbsp;${status}`;
+
+  const company = document.getElementById('company').value.trim();
+  const jobTitle = document.getElementById('jobTitle').value.trim();
+  let msg = data.message;
+  if (company || jobTitle) {
+    const role = jobTitle ? `<strong>${jobTitle}</strong>` : 'this role';
+    const comp = company ? ` at <strong>${company}</strong>` : '';
+    msg = `For ${role}${comp} — ${msg}`;
+  }
+
+  document.getElementById('ai-message').innerHTML = msg;
+
+  const tipsEl = document.getElementById('ai-tips');
+  tipsEl.innerHTML = '';
+  data.tips.forEach((tip, i) => {
+    const div = document.createElement('div');
+    div.className = 'ai-tip';
+    div.style.animationDelay = `${i * 0.08}s`;
+    div.innerHTML = `
+      <div class="tip-icon" style="background:${tip.color}">${tip.icon}</div>
+      <div class="tip-text">${tip.text}</div>
+    `;
+    tipsEl.appendChild(div);
+  });
+}
+
+function saveApplication() {
+  const company = document.getElementById('company').value.trim();
+  const jobTitle = document.getElementById('jobTitle').value.trim();
+  const dateApplied = document.getElementById('dateApplied').value;
+  const status = document.getElementById('status').value;
+  const notes = document.getElementById('notes').value.trim();
+
+  if (!company || !jobTitle || !status) {
+    showToast('⚠️ Company, Role & Status are required', true);
+    return;
+  }
+
+  const app = { company, jobTitle, dateApplied, status, notes };
+  applications.push(app);
+  renderTable();
+  updateStats();
+  showToast('✓ Application saved successfully');
+  clearForm();
+}
+
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+
+  if (applications.length === 0) {
+    tbody.innerHTML = `<tr id="empty-row"><td colspan="5"><div class="empty-state"><div class="empty-icon">📭</div><p>No applications saved yet. Add one above to get started.</p></div></td></tr>`;
+    return;
+  }
+
+  [...applications].reverse().forEach((app, i) => {
+    const tr = document.createElement('tr');
+    const chipClass = statusChipClass[app.status] || 'chip-applied';
+    const dateStr = app.dateApplied ? new Date(app.dateApplied + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+    tr.innerHTML = `
+      <td class="td-company">${esc(app.company)}</td>
+      <td class="td-role">${esc(app.jobTitle)}</td>
+      <td><span class="chip ${chipClass}">${esc(app.status)}</span></td>
+      <td class="td-date">${dateStr}</td>
+      <td class="td-notes">${esc(app.notes) || '<span style="opacity:0.3">—</span>'}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('count-badge').textContent = `${applications.length} saved`;
+}
+
+function updateStats() {
+  document.getElementById('stat-total').textContent = applications.length;
+  const active = applications.filter(a => ['Assessment','Interview'].includes(a.status)).length;
+  document.getElementById('stat-active').textContent = active;
+  const offers = applications.filter(a => a.status === 'Offer').length;
+  document.getElementById('stat-offers').textContent = offers;
+}
+
+function clearForm() {
+  ['company','jobTitle','dateApplied','status','notes','jobDesc','resumeText'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+}
+
+function esc(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+let toastTimer;
+function showToast(msg, isWarn = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = isWarn ? 'rgba(251,191,36,0.12)' : 'rgba(52,211,153,0.12)';
+  t.style.borderColor = isWarn ? 'rgba(251,191,36,0.3)' : 'rgba(52,211,153,0.25)';
+  t.style.color = isWarn ? 'var(--accent-amber)' : 'var(--accent-green)';
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// Set today's date as default
+document.getElementById('dateApplied').valueAsDate = new Date();
+</script>
+</body>
+</html>
