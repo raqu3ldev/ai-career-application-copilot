@@ -67,13 +67,16 @@ This provides a simple dashboard for organizing multiple job applications.
 
 ## Screenshots
 
-### Dashboard Interface
+## Screenshots
 
+### Dashboard Interface
 ![Dashboard Interface](dashboard.png)
 
-### Example Application Saved
+### AI Copilot Suggestion
+![AI Copilot Suggestion](example.png)
 
-![Application Tracker Example](example.png)
+### Application Tracker Example
+![Application Tracker](Application Tracker Example .png)
 
 ---
 
