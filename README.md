@@ -76,7 +76,7 @@ This provides a simple dashboard for organizing multiple job applications.
 ![AI Copilot Suggestion](example.png)
 
 ### Application Tracker Example
-![Application Tracker](Application Tracker Example.png)
+![Application Tracker](application_tracker_example.png)
 
 ---
 
