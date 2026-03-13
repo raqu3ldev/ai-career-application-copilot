@@ -69,11 +69,11 @@ This provides a simple dashboard for organizing multiple job applications.
 
 ### Dashboard Interface
 
-![Dashboard Interface](screenshots/dashboard.png)
+![Dashboard Interface](dashboard.png)
 
 ### Example Application Saved
 
-![Application Tracker Example](screenshots/example.png)
+![Application Tracker Example](example.png)
 
 ---
 
